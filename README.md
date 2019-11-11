@@ -1,4 +1,4 @@
-# Redes neuronales para la identificacino de Estilos de Aprendizaje
+# Redes neuronales para la identificacion de Estilos de Aprendizaje
 
 **Proyecto basado en tensorflow**
 
