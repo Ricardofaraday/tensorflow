@@ -22,6 +22,6 @@ app.use(express.static("public"));
 app.get("/", (request, response) => {
 	console.log("Solicitur recibida");
 });
-
-app.listen(4210);
-console.log("Servidor inicializado en el puerto 4210");
+const PORT = 4210
+app.listen(PORT);
+console.log(`Servidor inicializado en el puerto ${PORT}`);
