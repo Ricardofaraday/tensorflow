@@ -1,28 +1,24 @@
-getData = getDataFunction;
-createModel = createModelFunction;
-prepareData = prepareDataFunction
-trainModel = trainModelFunction;
-displayData = displayDataFunction;
-evaluateModel = evaluateModelFunction;
-
 async function run() {
   
-  // const data = await getData();
-  console.log('RUN data:', recursos);
-  displayData(recursos);
+  // const data = await getDataFunction();
   
-	const model = createModel();  
+  console.log('RUN DATA:', recursos);
+  displayDataFunction(recursos);
+  
+	const model = createModelFunction();  
 	tfvis.show.modelSummary({name: 'Modelo de Clasificacion'}, model);
 
-	const tensorData = prepareData(data);
+	const tensorData = prepareDataFunction(recursos);
 	const {inputs, outputs} = tensorData;
 		
-	await trainModel(model, inputs, outputs, 100);
+	await trainModelFunction(model, inputs, outputs, 100);
 	console.log('Done Training');
   
-  await evaluateModel(model, inputs, outputs);
+  await evaluateModelFunction(model, inputs, outputs);
 }
-
+/**@desc recuperar datos de un json de un archivo local 
+ * @return null
+*/
 function loadJSON(path, callback) {   
   var xobj = new XMLHttpRequest();
       xobj.overrideMimeType("application/json");
@@ -43,10 +39,12 @@ async function getDataFunction() {
   loadJSON("recursos.json", (response) => {
     const recursos = JSON.parse(response)
     // const data = await recursos.json();
-    console.log('response', data);
+    // console.log('response', data);
     return data;
   });
+
   // const wineDataReq = await fetch('https://raw.githubusercontent.com/NMZivkovic/file_hosting/master/wine_quality.json');  
+  // const wineDataReq = await fetch('http://localhost:8080/alumno/promRecursos');  
   // const wineDataReq = JSON.parse(recursos);
   // console.log('getData', wineDataReq);
   // const wineData = await wineDataReq.json();  
@@ -112,26 +110,7 @@ function displayDataFunction(data){
   // });
   
   // histograma(1, 1, 1, 1);
-  const r = [];
-  console.log('Display datos', data);
-  // data.forEach((i, e) => {
-  //   r.push({
-  //     index: i,
-  //     value: e[0].recurso1
-  //   });
-  //   console.log(e[0].resurso1);
-  // });
-  // const d = [];
-  // d = data[0];
-  // const arregloData = [];
-  // data.array.forEach(element => {
-    // d.foreach( (index, element) => {
-    //   console.log(element);
-    // });
-    
-  // });
-  // arregloData.push(data[0])
-  // histograma(r, 1, 1, 1);
+  
 
   let displayData = data.map(d => ({
     x: d.recurso1,
@@ -161,9 +140,9 @@ function displayDataFunction(data){
 */
 function createModelFunction() {
   const model = tf.sequential(); 
-  model.add(tf.layers.dense({inputShape: [6], units: 50, useBias: true, activation: 'sigmoid'}));
-  model.add(tf.layers.dense({units: 30, useBias: true, activation: 'sigmoid'}));
-  model.add(tf.layers.dense({units: 20, useBias: true, activation: 'sigmoid'}));
+  model.add(tf.layers.dense({inputShape: [4], units: 6, useBias: true, activation: 'sigmoid'}));
+  model.add(tf.layers.dense({units: 2, useBias: true, activation: 'sigmoid'}));
+  // model.add(tf.layers.dense({units: 20, useBias: true, activation: 'sigmoid'}));
 
   return model;
 }
@@ -176,7 +155,7 @@ function createModelFunction() {
 function extractInputs(data)
 {
   let inputs = []
-  inputs = data.map(d => [d.fixed_acidity, d.volatile_acidity, d.citric_acid, d.residual_sugar, d.chlorides, d.free_sulfur_dioxide, d.total_sulfur_dioxide, d.density, d.pH, d.sulphates, d.alcohol])
+  inputs = data.map(d => [d.recurso1, d.recurso2, d.recurso3, d.recurso4])
 	return inputs;
 }
 
@@ -191,7 +170,7 @@ function prepareDataFunction(data) {
     tf.util.shuffle(data);
     
     const inputs = extractInputs(data);
-    const outputs = data.map(d => d.quality);
+    const outputs = data.map(d => d.estilo);
 
     const inputTensor = tf.tensor2d(inputs, [inputs.length, inputs[0].length]);
     const outputTensor = tf.oneHot(tf.tensor1d(outputs, 'int32'), 10);
@@ -221,9 +200,8 @@ function prepareDataFunction(data) {
 */
 async function trainModelFunction(model, inputs, outputs, epochs) {
   model.compile({
-    optimizer: tf.train.adam(),
-    loss: 'categoricalCrossentropy',
-    metrics: ['accuracy'],
+    optimizer: tf.train.sgd(0.1),
+    loss: tf.losses.meanSquaredError
   });
   
   const batchSize = 64;
@@ -254,59 +232,57 @@ document.addEventListener('DOMContentLoaded', run);
 
 const recursos = [];
 recursos.push({
-		"recurso1": 0.25,
-		"recurso2": 0.6,
-		"recurso3": 0.9,
-		"recurso4": 0.85,
-		"recurso5": 0.44,
-    "recurso6": 0.15,
+		"recurso1": 0,
+		"recurso2": 0,		
+		"recurso3": 0.89,
+    "recurso4": 0.95,
     "estilo": 1
 	}, {
-		"recurso1": 0.25,
-		"recurso2": 0.3,
-		"recurso3": 0.5,
-		"recurso4": 0.55,
-		"recurso5": 0.24,
-    "recurso6": 0.55,
-    "estilo": 1
-	}, {
-		"recurso1": 0.95,
-		"recurso2": 0.3,
-		"recurso3": 0.6,
-		"recurso4": 0.85,
-		"recurso5": 0.54,
-    "recurso6": 0.65,
-    "estilo": 2
-	}, {
-		"recurso1": 0.15,
-		"recurso2": 0.2,
+		"recurso1": 0,
+		"recurso2": 0,
 		"recurso3": 0.7,
-		"recurso4": 0.55,
-		"recurso5": 0.25,
-    "recurso6": 0.85,
-    "estilo": 2
+		"recurso4": 0.75,
+    "estilo": 1
 	}, {
-		"recurso1": 0.55,
+		"recurso1": 0,
+		"recurso2": 0.1,
+		"recurso3": 0.85,
+		"recurso4": 0.9,
+    "estilo": 1
+	}, {
+		"recurso1": 0,
 		"recurso2": 0.15,
 		"recurso3": 0.9,
-		"recurso4": 0.4,
-		"recurso5": 0.5,
-    "recurso6": 0.7,
-    "estilo": 3
+		"recurso4": 0.99,
+    "estilo": 1
 	}, {
-		"recurso1": 0.25,
-		"recurso2": 0.4,
-		"recurso3": 0.9,
-		"recurso4": 0.35,
-		"recurso5": 0.65,
-    "recurso6": 0.95,
-    "estilo": 3
+		"recurso1": 0,
+		"recurso2": 0,
+		"recurso3": 0.95,
+		"recurso4": 0.89,
+    "estilo": 1
 	}, {
-		"recurso1": 0.2,
-		"recurso2": 0.8,
-		"recurso3": 0.25,
-		"recurso4": 0.85,
-		"recurso5": 0.8,
-    "recurso6": 0.35,
-    "estilo": 3
+		"recurso1": 0,
+		"recurso2": 0,
+		"recurso3": 0.75,
+		"recurso4": 0.89,		
+    "estilo": 1
+	}, {
+		"recurso1": 0.85,
+		"recurso2": 0.95,
+		"recurso3": 0,
+		"recurso4": 0,
+    "estilo": 2
+	}, {
+		"recurso1": 0.95,
+		"recurso2": 0.9,
+		"recurso3": 0,
+		"recurso4": 0,
+    "estilo": 2
+	}, {
+		"recurso1": 0.91,
+		"recurso2": 0.89,
+		"recurso3": 0,
+		"recurso4": 0,
+    "estilo": 2
 	});
