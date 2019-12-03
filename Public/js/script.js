@@ -76,25 +76,3 @@ async function intento() {
 intento();
 
 
-
-
-
-
-
-
-
-/**Buenas tardes, tengo algunas dudas en las que espero me puedan ayudar.
- * Tengo un modelo de RNA en la que tengo 6 variables de entrada que varian de [0 - 1]
- * y como salida tengo 3 salidas de las cuales deseo se activen con valores entre [0 - 1]
- * por ejemplo: 
- * entrada [0, 0, 0, 0, 0.9, 1] => salida [0, 0, 0.9]
- * entrada [0.9, 1, 0, 0, 0.9, 0] => salida [0.9, 0, 0.7]
- * entrada [0.8, 0, 0.5, 0.8, 0.8, 0] => salida [0.4, 0.8, 0.1]
- * Para esto, eh armado un modelo de la siguiente manera:
- * 6 entradas => 4 neuronas (capa oculta) => 3 salidas
- * mi duda es como logro identificar cuantas neuronas en la capa oculta deberia usar y si no debo agregar otra capa mas
- * tambien, desearia saber como pasarle los valores al modelo para entrenarlo ya que los ejemplos en internet muestran casos
- * con 2 variables 
- * 
- * 
-*/
