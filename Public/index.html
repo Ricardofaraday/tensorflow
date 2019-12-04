@@ -21,25 +21,19 @@
 
 	<script>
 
-		async function EnrtenarModelo(xTrain, yTrain, xTest, yTest) {
+		async function EntrenarModelo(xTrain, yTrain, xTest, yTest) {
 			const model = tf.sequential();
 			const ratioAprendizaje = .01;
-			const numEpochs = 50;
+			const numEpochs = 60;
 			const optimizer = tf.train.adam(ratioAprendizaje);
-		}
-
-		async function doEstilo() {
-			// 80% data para entrenamiento y 20% para pruebas
-			const [xTrain, yTrain, xTest, yTest] = getEstilosData(.2);
-			model = await EnrtenarModelo(xTrain, yTrain, xTest, yTest);
 			// 16 neuronas en la capa oculta
-			model.add(tf.layer.dense({
+			model.add(tf.layers.dense({
 				units: 16, 
 				activation: 'sigmoid', 
 				inputShape: [xTrain.shape[1]]
 			}));
 			// 8 neuronas de salida
-			model.add(tf.layer.dense({
+			model.add(tf.layers.dense({
 				units: 8,
 				activation: 'softmax'
 			}));
@@ -61,6 +55,16 @@
 			});
 
 			return model;
+		}
+
+		async function doEstilo() {
+			// 80% data para entrenamiento y 20% para pruebas
+			const [xTrain, yTrain, xTest, yTest] = getEstilosData(.2);
+			model = await EntrenarModelo(xTrain, yTrain, xTest, yTest);
+			
+			const input = tf.tensor2d([0.9, 0.9, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [1, 12]);
+			const prediccion = model.predict(input).dataSync();
+			console.log('Prediccion', prediccion);
 
 		}
 		

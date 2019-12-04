@@ -147,9 +147,9 @@ function getEstilosData(testSplit) {
  * 
  */
 function convertToTensors (data, targets, testSplit) {
-    console.log('data', data);
-    console.log('targets', targets);
-    console.log('testSplit', testSplit);
+    // console.log('data', data);
+    // console.log('targets', targets);
+    // console.log('testSplit', testSplit);
 
     const numEjemplos = data.length;
     if (numEjemplos !== targets.length) {
