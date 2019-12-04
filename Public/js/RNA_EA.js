@@ -90,7 +90,29 @@ const ESTILOS_DATA = [
     [0, 0, 0, 0, 0, 0, 0, 0, 0.9, 0.9, 0, 0, 7],
     [0, 0, 0, 0, 0, 0, 0, 0, 0.9, 0.9, 0, 0, 7],
     [0, 0, 0, 0, 0, 0, 0, 0, 0.8, 0.9, 0, 0, 7],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0.9, 0.9, 0, 0, 7]
+    [0, 0, 0, 0, 0, 0, 0, 0, 0.9, 0.9, 0, 0, 7],
+
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6],
+    
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6]
 ];
 
 /**
@@ -99,21 +121,21 @@ const ESTILOS_DATA = [
  * @param 
  */
 
-function getEstilosData(testSplit) {
+function getEstilosData(testDividir) {
     return tf.tidy(() => {
-        const dataByClass = [];
-        const targetByClass = [];
+        const datosPorClase = [];
+        const resultadoPorClase = [];
 
         for (let i = 0; i < ESTILOS.length; i++) {
-            dataByClass.push([]);
-            targetByClass.push([]);
+            datosPorClase.push([]);
+            resultadoPorClase.push([]);
         }
 
-        for (const example of ESTILOS_DATA) {
-            const target = example[example.length - 1];
-            const data = example.slice(0, example.length - 1);
-            dataByClass[target].push(data);
-            targetByClass[target].push(target);
+        for (const fila of ESTILOS_DATA) {
+            const prediccion = fila[fila.length - 1];
+            const data = fila.slice(0, fila.length - 1); //
+            datosPorClase[prediccion].push(data); //
+            resultadoPorClase[prediccion].push(prediccion); //
         }
 
         const xTrains = [];
@@ -122,7 +144,8 @@ function getEstilosData(testSplit) {
         const yTests = [];
 
         for (let i = 0; i < ESTILOS.length; i++) {
-            const [xTrain, yTrain, xTest, yTest] = convertToTensors(dataByClass[i], targetByClass[i], testSplit);
+            const [xTrain, yTrain, xTest, yTest] = 
+                convertToTensors(datosPorClase[i], resultadoPorClase[i], testDividir);
 
             xTrains.push(xTrain);
             yTrains.push(yTrain);
@@ -146,17 +169,15 @@ function getEstilosData(testSplit) {
 /**
  * 
  */
-function convertToTensors (data, targets, testSplit) {
+function convertToTensors (data, resultado, testDividir) {
     // console.log('data', data);
-    // console.log('targets', targets);
-    // console.log('testSplit', testSplit);
-
+    // console.log('resultado', resultado);
+    // console.log('testDividir', testDividir);
     const numEjemplos = data.length;
-    if (numEjemplos !== targets.length) {
+    if (numEjemplos !== resultado.length) {
         throw new Error('data y split tienen distintos numeros de ejemplos');
     }
-
-    const numTestEjemplos = Math.round(numEjemplos * testSplit);
+    const numTestEjemplos = Math.round(numEjemplos * testDividir);
     const numTrainEjemplos = numEjemplos - numTestEjemplos;
 
     const nro_recursos = data[0].length;
@@ -164,7 +185,7 @@ function convertToTensors (data, targets, testSplit) {
     // Creamos un tensor 2d para las entradas (recursos)
     const xs = tf.tensor2d(data, [numEjemplos, nro_recursos]);
     // Creamos un tensor 1D 
-    const ys = tf.oneHot(tf.tensor1d(targets).toInt(), ESTILOS_NRO);
+    const ys = tf.oneHot(tf.tensor1d(resultado).toInt(), ESTILOS_NRO);
     // Dividimos la data en sets de Entrenamiento y Test usando 'slice'
     const xTrain = xs.slice([0, 0], [numTrainEjemplos, nro_recursos]);
     const xTest = xs.slice([numTrainEjemplos, 0], [numTestEjemplos, nro_recursos]);
