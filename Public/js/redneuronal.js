@@ -3,9 +3,7 @@ const vHIDDEN = 16;
 const vOUTPUTS = 8;
 
 async function run() {
-  
   // const data = await getDataFunction();
-  
   console.log('RUN DATA:', recursos);
   //displayDataFunction(recursos);
 	const model = createModelFunction();  
